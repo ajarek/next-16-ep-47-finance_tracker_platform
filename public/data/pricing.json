@@ -1,0 +1,128 @@
+{
+  "billingToggle": {
+    "monthly": "Rozliczenie miesięczne",
+    "annual": "Rocznie (-20%)",
+    "badge": "2 MC GRATIS"
+  },
+  "plans": [
+    {
+      "id": "starter",
+      "category": "DLA POCZĄTKUJĄCYCH",
+      "name": "Starter",
+      "description": "Zbuduj pierwsze zdrowe nawyki oszczędzania.",
+      "priceMonthly": 24,
+      "priceAnnual": 24,
+      "annualNote": "Rozliczane rocznie (288 zł/rok)",
+      "badge": null,
+      "ctaLabel": "Wybierz Starter",
+      "ctaIcon": "ArrowRight",
+      "features": [
+        { "text": "Pierwsze 7 dni za 0 zł", "icon": "Check", "highlight": true },
+        { "text": "1 konto bankowe lub portfel", "icon": "Check" },
+        { "text": "Podstawowe wykresy wydatków", "icon": "Check" },
+        { "text": "Ręczne wprowadzanie transakcji", "icon": "Check" },
+        { "text": "Synchronizacja na żywo Firebase", "icon": "X", "disabled": true },
+        { "text": "Import wyciągów CSV/PDF", "icon": "X", "disabled": true }
+      ]
+    },
+    {
+      "id": "pro",
+      "category": "PEŁNA INTELIGENCJA FINANSOWA",
+      "name": "Plan Pro Cloud",
+      "description": "Dla tych, którzy chcą automatyzacji i realnego wzrostu majątku.",
+      "priceMonthly": 49,
+      "priceAnnual": 39,
+      "annualNote": "Oszczędzasz 120 zł rocznie przy rozliczeniu rocznym",
+      "badge": {
+        "top": "NAJPOPULARNIEJSZY WYBÓR",
+        "side": "REKOMENDOWANY"
+      },
+      "ctaLabel": "Rozpocznij próbny Pro",
+      "ctaIcon": "Check",
+      "ctaPrimary": true,
+      "features": [
+        { "text": "7 dni bezpłatnie", "icon": "Check", "highlight": true, "subtext": "Anuluj w kliknięciem" },
+        { "text": "Nielimitowana liczba kont i walut", "icon": "Check" },
+        { "text": "Synchronizacja w chmurze Firebase Cloud", "icon": "Check" },
+        { "text": "Automatyczny import wyciągów PDF & CSV", "icon": "Check" },
+        { "text": "Kategoryzacja AI & predykcja kosztów", "icon": "Check" },
+        { "text": "Inteligentne alerty i limity budżetowe", "icon": "Check" },
+        { "text": "Współdzielenie budżetu z partnerem", "icon": "Check" }
+      ]
+    },
+    {
+      "id": "enterprise",
+      "category": "DLA SPÓŁEK I ZESPOŁÓW",
+      "name": "Enterprise",
+      "description": "Zaawansowana analityka wielopodmiotowa i integracje.",
+      "priceMonthly": 79,
+      "priceAnnual": 79,
+      "annualNote": "Dostęp wielostanowiskowy bez limitu",
+      "badge": null,
+      "ctaLabel": "Wybierz Enterprise",
+      "ctaIcon": "ArrowRight",
+      "features": [
+        { "text": "Wsparcie wdrożeniowe 24/7", "icon": "Check", "highlight": true },
+        { "text": "Wszystko z planu Pro dla max 10 osób", "icon": "Check" },
+        { "text": "Dedykowany audyt logów Firebase", "icon": "Check" },
+        { "text": "Eksport do systemów księgowych (Optima, Enova)", "icon": "Check" },
+        { "text": "Pełny dostęp do prywatnego API", "icon": "Check" },
+        { "text": "Umowa SLA 99.9% oraz dedykowany opiekun", "icon": "Check" }
+      ]
+    }
+  ],
+  "trialActivation": {
+    "title": "Podsumowanie aktywacji okresu próbnego",
+    "selectedPlan": "Plan Pro Cloud (Roczny)",
+    "steps": [
+      {
+        "number": 1,
+        "label": "DZIŚ!",
+        "price": "0,00 zł",
+        "description": "Natychmiastowy dostęp do wszystkich funkcji Pro."
+      },
+      {
+        "number": 2,
+        "label": "ZA 7 DNI (PO OKRESIE PRÓBNYM)",
+        "price": "39,00 zł / mc",
+        "description": "Automatyczne odnowienie, chyba że anulujesz wcześniej."
+      }
+    ],
+    "securityNotes": [
+      { "icon": "Shield", "text": "Szyfrowanie SSL 256-bit" },
+      { "icon": "Bell", "text": "Przypomnimy Ci mailem w 5. dniu" },
+      { "icon": "PhoneOff", "text": "Rezygnacja bez telefonu i pytań" }
+    ]
+  },
+  "paymentMethods": [
+    { "id": "blik", "name": "BLIK", "description": "1-klik" },
+    { "id": "card", "name": "Karta", "description": "" },
+    { "id": "wallet", "name": "Google / Apple Pay", "description": "" }
+  ],
+  "whyNow": {
+    "title": "WSZYSTKIE NARZĘDZIA DO PRZEJĘCIA KONTROLI NAD MAJĄTKIEM",
+    "features": [
+      {
+        "icon": "Cloud",
+        "title": "Baza Firebase Cloud",
+        "description": "Natychmiastowa synchronizacja danych między smartfonem, tabletem i komputerem bez opóźnień.",
+        "stat": "Czas odpowiedzi poniżej 40ms",
+        "statIcon": "Timer"
+      },
+      {
+        "icon": "PieChart",
+        "title": "Wizualny Budżet Neon",
+        "description": "Przejrzyste wykresy kołowe i słupkowe pomagają zidentyfikować wycieki kapitału w pierwszych 48 godzinach.",
+        "stat": "Średnio -18% zbędnych wydatków",
+        "statIcon": "TrendingDown"
+      },
+      {
+        "icon": "Brain",
+        "title": "Autopilot Finansowy AI",
+        "description": "Wgrywaj pliki PDF lub zdjęcia paragonów. Algorytm automatycznie przypisze wydatki do odpowiednich kategorii.",
+        "stat": "99.4% trafności klasyfikacji",
+        "statIcon": "Target"
+      }
+    ]
+  }
+}

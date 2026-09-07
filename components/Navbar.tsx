@@ -5,6 +5,7 @@ import { Plus, User, Menu } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import MobileMenu from "@/components/MobileMenu";
 import type { NavLinkItem } from "@/lib/types";
+import Link from "next/link";
 
 interface NavbarProps {
   navLinks: NavLinkItem[];
@@ -28,7 +29,7 @@ export default function Navbar({
         <div className="max-w-7xl mx-auto h-20 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* Logo i nazwa platformy */}
           <div className="flex items-center gap-8">
-            <a href="#" className="flex items-center gap-3 group">
+            <Link href="/" className="flex items-center gap-3 group">
               <div className="w-10 h-10 rounded-xl bg-linear-to-br from-primary/30 to-primary-container/20 border border-primary/40 flex items-center justify-center text-primary shadow-sm group-hover:scale-105 transition-transform">
                 <svg
                   className="w-6 h-6"
@@ -47,7 +48,7 @@ export default function Navbar({
               <span className="text-xl font-extrabold tracking-tight text-on-surface">
                 Finance Tracker
               </span>
-            </a>
+            </Link>
 
             {/* Nawigacja desktopowa */}
             <nav className="hidden lg:flex items-center gap-6">
