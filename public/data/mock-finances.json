@@ -1,0 +1,102 @@
+{
+  "metrics": {
+    "totalIncome": {
+      "amount": 8920.80,
+      "currency": "PLN",
+      "percentageChange": 14.2,
+      "period": "w tym msc",
+      "trend": "up"
+    },
+    "currentExpenses": {
+      "amount": 1010.95,
+      "currency": "PLN",
+      "percentageChange": -8.4,
+      "period": "oszczędności",
+      "trend": "down"
+    },
+    "netProfit": {
+      "amount": 7493.52,
+      "currency": "PLN",
+      "status": "W normie budżetowej",
+      "trend": "stable"
+    }
+  },
+  "currentBalance": {
+    "amount": 3192.00,
+    "currency": "zł",
+    "status": "+14% w normie",
+    "inflows": 4469.64,
+    "outflows": 3192.60
+  },
+  "categories": [
+    {
+      "id": "cat-1",
+      "name": "Jedzenie & Restauracje",
+      "amount": 1106.72,
+      "currency": "PLN",
+      "percentage": 68,
+      "color": "secondary"
+    },
+    {
+      "id": "cat-2",
+      "name": "Media & Mieszkanie",
+      "amount": 677.96,
+      "currency": "PLN",
+      "percentage": 44,
+      "color": "tertiary"
+    },
+    {
+      "id": "cat-3",
+      "name": "Transport & Podróże",
+      "amount": 414.00,
+      "currency": "PLN",
+      "percentage": 32,
+      "color": "primary"
+    },
+    {
+      "id": "cat-4",
+      "name": "Rozrywka, AI & Streaming",
+      "amount": 233.96,
+      "currency": "PLN",
+      "percentage": 52,
+      "color": "primary-fixed"
+    },
+    {
+      "id": "cat-5",
+      "name": "Zdrowie & Apteka",
+      "amount": 240.00,
+      "currency": "PLN",
+      "percentage": 25,
+      "color": "secondary-fixed"
+    }
+  ],
+  "recentTransactions": [
+    {
+      "id": "tx-1",
+      "title": "Wypłata główna - Kontrakt B2B",
+      "category": "Przychody",
+      "amount": 8920.80,
+      "type": "income",
+      "date": "2025-10-24T08:15:00Z",
+      "status": "Zrealizowano"
+    },
+    {
+      "id": "tx-2",
+      "title": "Subskrypcja Firebase & Cloud Engine",
+      "category": "Rozrywka, AI & Streaming",
+      "amount": 233.96,
+      "type": "expense",
+      "date": "2025-10-23T19:40:00Z",
+      "status": "Zrealizowano"
+    },
+    {
+      "id": "tx-3",
+      "title": "Supermarket BioEko - Zakupy tygodniowe",
+      "category": "Jedzenie & Restauracje",
+      "amount": 342.50,
+      "type": "expense",
+      "date": "2025-10-23T16:20:00Z",
+      "status": "Zrealizowano"
+    }
+  ]
+}

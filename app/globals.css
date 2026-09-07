@@ -1,26 +1,199 @@
 @import "tailwindcss";
 
+/*
+  Definicje zmiennych semantycznych dla motywu jasnego i ciemnego.
+  Domyślnym motywem dla platformy finansowej jest ciemny (dark),
+  zgodnie z projektem graficznym oraz wymogami interfejsu.
+*/
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Motyw jasny - czyste, nowoczesne odcienie z akcentem morskim i koralowym */
+  --background: #f4f6fb;
+  --foreground: #101321;
+
+  --surface: #ffffff;
+  --surface-dim: #edf0f7;
+  --surface-bright: #ffffff;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f8fafc;
+  --surface-container: #edf1f7;
+  --surface-container-high: #e2e8f0;
+  --surface-container-highest: #cbd5e1;
+  --surface-variant: #e2e8f0;
+
+  --on-surface: #0f172a;
+  --on-surface-variant: #64748b;
+  --on-background: #0f172a;
+
+  /* Kolory akcentujące - morski szmaragd, koral, bursztyn */
+  --primary: #00b894;
+  --primary-hover: #00a383;
+  --primary-container: #00d2aa;
+  --primary-fixed: #10b981;
+  --primary-fixed-dim: #059669;
+  --on-primary: #ffffff;
+  --on-primary-container: #004d3d;
+
+  --secondary: #f43f5e;
+  --secondary-container: #ffe4e6;
+  --secondary-fixed: #fda4af;
+  --on-secondary: #ffffff;
+
+  --tertiary: #f59e0b;
+  --tertiary-container: #fef3c7;
+  --on-tertiary: #ffffff;
+
+  --outline: #94a3b8;
+  --outline-variant: #cbd5e1;
+  --border: rgba(148, 163, 184, 0.25);
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glow-primary: rgba(0, 184, 148, 0.25);
 }
 
-@theme inline {
+.dark {
+  /* Motyw ciemny - głęboki grafit i kosmiczny granat z neonowymi akcentami */
+  --background: #101321;
+  --foreground: #e0e1f6;
+
+  --surface: #101321;
+  --surface-dim: #0b0e19;
+  --surface-bright: #363848;
+  --surface-container-lowest: #0a0d1b;
+  --surface-container-low: #181b29;
+  --surface-container: #1c1f2d;
+  --surface-container-high: #262938;
+  --surface-container-highest: #313444;
+  --surface-variant: #313444;
+
+  --on-surface: #e0e1f6;
+  --on-surface-variant: #94a3b8;
+  --on-background: #e0e1f6;
+
+  /* Neonowe akcenty - turkusowy cyjan, różany koral, złocisty bursztyn */
+  --primary: #45efc5;
+  --primary-hover: #57fcd2;
+  --primary-container: #00d2aa;
+  --primary-fixed: #57fcd2;
+  --primary-fixed-dim: #2bdfb6;
+  --on-primary: #00382b;
+  --on-primary-container: #005543;
+
+  --secondary: #ffb2b8;
+  --secondary-container: #ac0037;
+  --secondary-fixed: #ffdadb;
+  --on-secondary: #67001e;
+
+  --tertiary: #ffcf7a;
+  --tertiary-container: #f3ae00;
+  --on-tertiary: #422c00;
+
+  --outline: #85948d;
+  --outline-variant: #3b4a44;
+  --border: rgba(255, 255, 255, 0.08);
+  --glass-bg: rgba(28, 31, 45, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glow-primary: rgba(69, 239, 197, 0.35);
+}
+
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-bright: var(--surface-bright);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-variant: var(--surface-variant);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-on-background: var(--on-background);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-container: var(--primary-container);
+  --color-primary-fixed: var(--primary-fixed);
+  --color-primary-fixed-dim: var(--primary-fixed-dim);
+  --color-on-primary: var(--on-primary);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-secondary: var(--secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-secondary-fixed: var(--secondary-fixed);
+  --color-on-secondary: var(--on-secondary);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary: var(--on-tertiary);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-border: var(--border);
+
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Style bazowe i typograficzne */
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+html.light {
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  color: var(--on-surface);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Klasy pomocnicze dla efektu szkła (glassmorphism) */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-panel-subtle {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.light .glass-panel-subtle {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* Poświaty i cienie neonowe */
+.neon-glow-primary {
+  box-shadow: 0 0 35px var(--glow-primary);
+}
+
+.neon-glow-hover:hover {
+  box-shadow: 0 0 45px var(--glow-primary);
+}
+
+/* Dyskretny pasek przewijania */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-container-high);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--outline);
 }

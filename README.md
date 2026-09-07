@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Finance Tracker Platform
 
-## Getting Started
+Nowoczesna platforma do inteligentnego zarządzania finansami osobistymi, budżetem i inwestycjami z synchronizacją w czasie rzeczywistym Firebase.
 
-First, run the development server:
+## Stos technologiczny
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Framework**: Next.js 16.3.4 (App Router, Turbopack)
+- **UI / Biblioteka**: React 19, Tailwind CSS v4
+- **Typowanie**: TypeScript (strict mode)
+- **Animacje**: Framer Motion
+- **Ikony**: Lucide React
+- **Efekty wizualne**: WebGL Shader (gradienty, siatka proceduralna, spotlight śledzący kursor)
+- **Baza danych i uwierzytelnianie**: Firebase (Firestore & Firebase Auth)
+
+## Architektura i struktura projektu
+
+```
+├── app/
+│   ├── globals.css           # Zmienne semantyczne motywu (jasny / ciemny) i style bazowe Tailwind v4
+│   ├── layout.tsx            # Główny layout z fontem Plus Jakarta Sans i metadanymi SEO
+│   └── page.tsx              # Server Component zasilający stronę główną danymi z public/data
+├── components/
+│   ├── AuthModal.tsx         # Modal rejestracji i darmowego 7-dniowego okresu próbnego
+│   ├── AuthSection.tsx       # Sekcja szybkiej rejestracji z logowaniem społecznościowym
+│   ├── DashboardMockup.tsx   # Szklany panel pulpitu finansowego (statystyki na żywo, wykres pierścieniowy, paski budżetu)
+│   ├── FeaturesSection.tsx   # Sekcja kart funkcji platformy i gotowości na skalowanie
+│   ├── Footer.tsx            # Stopka z certyfikatami i linkami prawnymi
+│   ├── HeroSection.tsx       # Sekcja powitalna z nagłówkiem gradientowym i przyciskami CTA
+│   ├── LandingPageContent.tsx# Główny kontener kliencki zarządzający stanem modali i transakcji
+│   ├── MobileMenu.tsx        # Płynne menu wysuwane z lewej krawędzi ekranu
+│   ├── Navbar.tsx            # Pasek nawigacyjny z logo, statusem Firebase Live i przełącznikiem motywu
+│   ├── ThemeToggle.tsx       # Przełącznik motywu ciemny / jasny (odporny na błędy hydratacji)
+│   ├── TransactionModal.tsx  # Modal dodawania nowej transakcji z natychmiastową synchronizacją
+│   └── WebGlBackground.tsx   # Interaktywny shader WebGL w tle
+├── lib/
+│   ├── types.ts              # Interfejsy TypeScript modeli danych
+│   └── utils.ts              # Narzędzia pomocnicze (formatowanie walut, łączenie klas cn)
+└── public/
+    └── data/
+        ├── features.json      # Dane sekcji funkcji
+        ├── mock-finances.json # Przykładowe metryki, kategorie i transakcje
+        └── navigation.json    # Dane linków nawigacyjnych
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Uruchomienie lokalne
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Instalacja zależności
+npm install
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Uruchomienie serwera deweloperskiego
+npm run dev
 
-## Learn More
+# Sprawdzanie typów TypeScript
+npx tsc --noEmit
 
-To learn more about Next.js, take a look at the following resources:
+# Linting kodu
+npm run lint
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Budowanie wersji produkcyjnej
+npm run build
+```

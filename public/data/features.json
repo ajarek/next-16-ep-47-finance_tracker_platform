@@ -1,0 +1,26 @@
+[
+  {
+    "id": "realtime-sync",
+    "icon": "Zap",
+    "color": "primary",
+    "title": "Synchronizacja w milisekundach",
+    "description": "Baza danych Google Firestore przesyła zdarzenia realtime na Twoje urządzenia. Dodaj wydatek na smartfonie, a zobaczysz go w ułamku sekundy na laptopie.",
+    "cta": "Poznaj architekturę realtime"
+  },
+  {
+    "id": "ai-analytics",
+    "icon": "Brain",
+    "color": "tertiary",
+    "title": "Analityka AI Budżetu",
+    "description": "Inteligentny silnik uczenia maszynowego kategoryzuje transakcje, przewiduje wydatki na koniec miesiąca i sugeruje realne oszczędności bez wyrzeczeń.",
+    "cta": "Zobacz modele predykcji"
+  },
+  {
+    "id": "bank-security",
+    "icon": "ShieldCheck",
+    "color": "secondary",
+    "title": "Szyfrowanie Bankowe",
+    "description": "Autoryzacja Firebase Auth, izolacja kont na poziomie reguł bezpieczeństwa Firestore Rules oraz szyfrowanie end-to-end zgodne z normami PCI-DSS.",
+    "cta": "Raport bezpieczeństwa"
+  }
+]

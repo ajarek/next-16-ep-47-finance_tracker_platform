@@ -1,0 +1,14 @@
+{
+  "navLinks": [
+    { "label": "Strona główna", "href": "#", "active": true },
+    { "label": "Cennik & Okres Próbny", "href": "#cennik", "active": false },
+    { "label": "Panel Finansów", "href": "#dashboard-mockup", "active": false },
+    { "label": "Zarządzanie Użytkownikami", "href": "#funkcje", "active": false }
+  ],
+  "footerLinks": [
+    { "label": "Plany subskrypcji", "href": "#cennik" },
+    { "label": "Bezpieczeństwo Firebase 256-bit", "href": "#bezpieczenstwo" },
+    { "label": "Polityka prywatności", "href": "#" },
+    { "label": "Regulamin platformy", "href": "#" }
+  ]
+}
