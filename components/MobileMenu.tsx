@@ -2,8 +2,20 @@
 
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Wallet, Plus, ArrowRight, Shield, Zap } from "lucide-react";
+import {
+  X,
+  Wallet,
+  Plus,
+  ArrowRight,
+  Shield,
+  Zap,
+  User,
+  LogOut,
+  BarChart3,
+} from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
 import type { NavLinkItem } from "@/lib/types";
+import Link from "next/link";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -15,6 +27,7 @@ interface MobileMenuProps {
 
 /**
  * Płynnie wysuwane menu boczne dla urządzeń mobilnych z lewej strony ekranu.
+ * Zawiera informacje o stanie zalogowania i przycisk wylogowania.
  */
 export default function MobileMenu({
   isOpen,
@@ -23,6 +36,8 @@ export default function MobileMenu({
   onOpenTransactionModal,
   onOpenAuthModal,
 }: MobileMenuProps) {
+  const { user, userProfile, loading, signOutUser } = useAuth();
+
   // Blokowanie przewijania strony przy otwartym menu
   useEffect(() => {
     if (isOpen) {
@@ -88,6 +103,40 @@ export default function MobileMenu({
                 </button>
               </div>
 
+              {/* Profil użytkownika (jeśli zalogowany) */}
+              {user && !loading && (
+                <div className="mt-6 mb-2 p-4 rounded-xl bg-surface-container-high/60 border border-border">
+                  <div className="flex items-center gap-3 mb-3">
+                    {userProfile?.photoURL ? (
+                      <img
+                        src={userProfile.photoURL}
+                        alt={userProfile.displayName}
+                        className="w-12 h-12 rounded-full border-2 border-primary/40 object-cover"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary">
+                        <User className="w-6 h-6" />
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-on-surface truncate">
+                        {userProfile?.displayName ?? "Użytkownik"}
+                      </p>
+                      <p className="text-[11px] text-on-surface-variant truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-on-surface-variant">Plan:</span>
+                    <span className="font-bold text-primary uppercase">
+                      {userProfile?.plan ?? "Free"}
+                    </span>
+                  </div>
+                </div>
+              )}
+
               {/* Lista linków nawigacyjnych */}
               <nav className="py-6 space-y-2">
                 {navLinks.map((link) => (
@@ -105,6 +154,21 @@ export default function MobileMenu({
                     <ArrowRight className="w-4 h-4 opacity-70" />
                   </a>
                 ))}
+
+                {/* Link do panelu (jeśli zalogowany) */}
+                {user && !loading && (
+                  <Link
+                    href="/dashboard"
+                    onClick={onClose}
+                    className="flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/60 transition-all"
+                  >
+                    <span className="flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5 text-primary" />
+                      Panel finansów
+                    </span>
+                    <ArrowRight className="w-4 h-4 opacity-70" />
+                  </Link>
+                )}
               </nav>
 
               {/* Płytka statusu połączenia */}
@@ -128,26 +192,43 @@ export default function MobileMenu({
 
             {/* Przyciski akcji na dole panelu */}
             <div className="pt-6 border-t border-border space-y-3">
-              <button
-                onClick={() => {
-                  onClose();
-                  onOpenTransactionModal();
-                }}
-                className="w-full py-3 px-4 rounded-full bg-primary hover:bg-primary-hover text-on-primary font-bold text-sm flex items-center justify-center gap-2 shadow-lg transition-all"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Dodaj transakcję</span>
-              </button>
+              {/* Dodaj transakcję — tylko dla zalogowanych */}
+              {user && !loading && (
+                <button
+                  onClick={() => {
+                    onClose();
+                    onOpenTransactionModal();
+                  }}
+                  className="w-full py-3 px-4 rounded-full bg-primary hover:bg-primary-hover text-on-primary font-bold text-sm flex items-center justify-center gap-2 shadow-lg transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Dodaj transakcję</span>
+                </button>
+              )}
 
-              <button
-                onClick={() => {
-                  onClose();
-                  onOpenAuthModal();
-                }}
-                className="w-full py-3 px-4 rounded-full bg-surface-container-high hover:bg-surface-bright text-on-surface font-semibold text-sm transition-all"
-              >
-                Logowanie / Rejestracja
-              </button>
+              {/* Logowanie / Wylogowanie */}
+              {user && !loading ? (
+                <button
+                  onClick={() => {
+                    signOutUser();
+                    onClose();
+                  }}
+                  className="w-full py-3 px-4 rounded-full bg-secondary/15 hover:bg-secondary/25 text-secondary font-semibold text-sm flex items-center justify-center gap-2 transition-all"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Wyloguj się</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    onClose();
+                    onOpenAuthModal();
+                  }}
+                  className="w-full py-3 px-4 rounded-full bg-surface-container-high hover:bg-surface-bright text-on-surface font-semibold text-sm transition-all"
+                >
+                  Logowanie / Rejestracja
+                </button>
+              )}
             </div>
           </motion.aside>
         </>

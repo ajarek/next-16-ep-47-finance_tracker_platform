@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { Plus_Jakarta_Sans } from "next/font/google"
+import { AuthProvider } from "@/lib/auth-context"
 import "./globals.css"
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -45,7 +46,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className='min-h-full flex flex-col font-sans bg-surface text-on-surface'>
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   )

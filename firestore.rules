@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // =========================================================================
+    // Kolekcja: users — profile użytkowników
+    // =========================================================================
+    // Każdy użytkownik może czytać i pisać TYLKO swój własny profil.
+    // Pola plan i planActivatedAt mogą być aktualizowane tylko przez
+    // serwer (via Admin SDK) — reguły klienta nie zezwalają na zmianę.
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null
+                    && request.auth.uid == userId
+                    && !("plan" in request.resource.data.diff(resource.data).affectedKeys())
+                    && !("planActivatedAt" in request.resource.data.diff(resource.data).affectedKeys());
+      allow delete: if false; // Nie pozwalamy na usuwanie profili
+    }
+
+    // =========================================================================
+    // Kolekcja: operations — operacje finansowe
+    // =========================================================================
+    // Użytkownicy mogą czytać i pisać TYLKO własne operacje.
+    // Pole userId musi odpowiadać zalogowanemu użytkownikowi.
+    match /operations/{operationId} {
+      allow read: if request.auth != null
+                  && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.keys().hasAll(['userId', 'title', 'amount', 'type', 'category', 'date', 'status']);
+      allow update: if request.auth != null
+                    && resource.data.userId == request.auth.uid
+                    && request.resource.data.userId == resource.data.userId; // userId nie może się zmienić
+      allow delete: if request.auth != null
+                    && resource.data.userId == request.auth.uid;
+    }
+
+    // =========================================================================
+    // Kolekcja: categories — kategorie budżetowe
+    // =========================================================================
+    // Użytkownicy mogą zarządzać TYLKO własnymi kategoriami.
+    match /categories/{categoryId} {
+      allow read: if request.auth != null
+                  && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid;
+      allow update: if request.auth != null
+                    && resource.data.userId == request.auth.uid
+                    && request.resource.data.userId == resource.data.userId;
+      allow delete: if request.auth != null
+                    && resource.data.userId == request.auth.uid;
+    }
+  }
+}
