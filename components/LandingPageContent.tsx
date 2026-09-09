@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import WebGlBackground from "@/components/WebGlBackground";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -10,6 +10,9 @@ import AuthSection from "@/components/AuthSection";
 import Footer from "@/components/Footer";
 import AuthModal from "@/components/AuthModal";
 import TransactionModal from "@/components/TransactionModal";
+import { useAuth } from "@/lib/auth-context";
+import { createOperation, onOperationsSnapshot, onCategoriesSnapshot, recalculateAllCategoriesSpent } from "@/lib/firestore";
+import type { FirestoreOperation } from "@/lib/firestore-types";
 import type {
   FinanceMetrics,
   BalanceOverview,
@@ -41,6 +44,7 @@ export default function LandingPageContent({
   navLinks,
   footerLinks,
 }: LandingPageContentProps) {
+  const { user } = useAuth();
   const [metrics, setMetrics] = useState<FinanceMetrics>(initialMetrics);
   const [balance, setBalance] = useState<BalanceOverview>(initialBalance);
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
@@ -49,8 +53,83 @@ export default function LandingPageContent({
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
 
-  // Dodanie nowej transakcji i dynamiczne przeliczenie salda oraz metryk
-  const handleAddTransaction = (newTx: Transaction) => {
+  // Nasłuchiwanie zmian operacji i kategorii z Firestore w czasie rzeczywistym
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubOps = onOperationsSnapshot(user.uid, (ops: FirestoreOperation[]) => {
+      const mapped: Transaction[] = ops.map((op) => ({
+        id: op.id,
+        title: op.title,
+        category: op.category,
+        amount: op.amount,
+        type: op.type,
+        date: typeof op.date?.toDate === "function"
+          ? op.date.toDate().toISOString()
+          : String(op.date),
+        status: op.status,
+      }));
+      setTransactions(mapped);
+
+      // Przelicz metryki na podstawie operacji z Firestore
+      let totalIncome = 0;
+      let totalExpenses = 0;
+      for (const op of ops) {
+        if (op.type === "income") totalIncome += op.amount;
+        else totalExpenses += op.amount;
+      }
+      const netProfit = totalIncome - totalExpenses;
+
+      setBalance({
+        amount: netProfit,
+        currency: "PLN",
+        status: netProfit >= 0 ? "Saldo dodatnie" : "Saldo ujemne",
+        inflows: totalIncome,
+        outflows: totalExpenses,
+      });
+      setMetrics({
+        totalIncome: { ...initialMetrics.totalIncome, amount: totalIncome },
+        currentExpenses: { ...initialMetrics.currentExpenses, amount: totalExpenses },
+        netProfit: { ...initialMetrics.netProfit, amount: netProfit },
+      });
+    });
+
+    const unsubCats = onCategoriesSnapshot(user.uid, () => {
+      // Kategorie zaktualizują się automatycznie
+    });
+
+    recalculateAllCategoriesSpent(user.uid).catch(() => {});
+
+    return () => {
+      unsubOps();
+      unsubCats();
+    };
+  }, [user, initialMetrics]);
+
+  // Dodanie nowej transakcji: zapis do Firestore + aktualizacja lokalnego stanu
+  const handleAddTransaction = async (newTx: Transaction) => {
+    // Zapis do Firestore (jeśli zalogowany)
+    if (user) {
+      try {
+        const { Timestamp } = await import("firebase/firestore");
+        await createOperation({
+          userId: user.uid,
+          title: newTx.title,
+          amount: newTx.amount,
+          type: newTx.type,
+          category: newTx.category,
+          date: Timestamp.fromDate(new Date(newTx.date)),
+          status: "completed",
+          notes: null,
+        });
+        // Snapshot automatycznie zaktualizuje listę operacji
+        return;
+      } catch (error) {
+        console.error("[Landing] Błąd zapisu operacji do Firestore:", error);
+      }
+    }
+
+    // Fallback: aktualizacja lokalnego stanu (niezalogowany lub błąd zapisu)
     setTransactions((prev) => [newTx, ...prev]);
 
     if (newTx.type === "income") {

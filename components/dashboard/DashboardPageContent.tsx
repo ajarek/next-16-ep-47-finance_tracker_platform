@@ -3,6 +3,15 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { PieChart, Pie, Cell } from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
 import {
   ArrowUpRight,
   ArrowDownLeft,
@@ -14,7 +23,6 @@ import {
   PlusCircle,
   Trash2,
   Wallet,
-  BarChart3,
   Receipt,
   Settings,
 } from "lucide-react";
@@ -38,6 +46,7 @@ import type {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import TransactionModal from "@/components/TransactionModal";
+import AnalyticsCharts from "@/components/dashboard/AnalyticsCharts";
 import Link from "next/link";
 import navigationData from "@/public/data/navigation.json";
 
@@ -419,57 +428,86 @@ useEffect(() => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Saldo */}
               <div className="bg-surface-container-high/50 border border-border rounded-2xl p-6 backdrop-blur-xl">
-                <h3 className="text-lg font-bold text-on-surface mb-4">
-                  Saldo bieżące
-                </h3>
-                <div className="flex flex-col items-center py-8">
-                  <div className="relative w-48 h-48 flex items-center justify-center">
-                    <svg
-                      className="w-full h-full transform -rotate-90"
-                      viewBox="0 0 160 160"
-                    >
-                      <circle
-                        cx="80"
-                        cy="80"
-                        r="64"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="12"
-                        className="text-surface-variant/40"
-                      />
-                      <circle
-                        cx="80"
-                        cy="80"
-                        r="64"
-                        fill="none"
-                        stroke="#45efc5"
-                        strokeWidth="12"
-                        strokeDasharray="402"
-                        strokeDashoffset={
-                          balance.amount >= 0 ? 140 : 260
-                        }
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                      <span className="text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold">
-                        Saldo
-                      </span>
-                      <span className="text-2xl font-extrabold text-on-surface mt-0.5">
-                        {balance.amount.toLocaleString("pl-PL")} PLN
-                      </span>
-                      <span
-                        className={`text-xs font-bold mt-1 ${
-                          balance.amount >= 0
-                            ? "text-primary"
-                            : "text-secondary"
-                        }`}
-                      >
-                        {balance.status}
-                      </span>
-                    </div>
-                  </div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-on-surface">
+                    Saldo bieżące
+                  </h3>
+                  <span className="text-xs text-on-surface-variant bg-surface-container-lowest border border-border px-3 py-1 rounded-full">
+                    Podsumowanie
+                  </span>
                 </div>
+                {(() => {
+                  const totalAbs = balance.inflows + balance.outflows;
+                  const saldoChartData = [
+                    { name: "Przychody", value: balance.inflows, fill: "#45efc5" },
+                    { name: "Wydatki", value: balance.outflows, fill: "#ffb2b8" },
+                  ];
+                  const saldoChartConfig = {
+                    przychody: { label: "Przychody", color: "#45efc5" },
+                    wydatki: { label: "Wydatki", color: "#ffb2b8" },
+                  } satisfies ChartConfig;
+                  return (
+                    <div className="flex flex-col items-center py-4">
+                      <ChartContainer
+                        config={saldoChartConfig}
+                        className="relative aspect-auto h-[200px] sm:h-[250px] lg:h-[280px] w-full max-w-[240px] sm:max-w-[280px] lg:max-w-[320px]"
+                      >
+                        <PieChart>
+                          <ChartTooltip
+                            cursor={false}
+                            content={
+                              <ChartTooltipContent
+                                hideLabel
+                                formatter={(value) => `${Number(value).toLocaleString("pl-PL")} PLN`}
+                              />
+                            }
+                          />
+                          <Pie
+                            data={saldoChartData}
+                            dataKey="value"
+                            nameKey="name"
+                            cx="50%"
+                            cy="45%"
+                            innerRadius="42%"
+                            outerRadius="82%"
+                            strokeWidth={3}
+                            stroke="var(--background)"
+                          >
+                            {saldoChartData.map((entry) => (
+                              <Cell key={entry.name} fill={entry.fill} />
+                            ))}
+                          </Pie>
+                          <ChartLegend
+                            content={<ChartLegendContent nameKey="name" />}
+                            verticalAlign="bottom"
+                          />
+                        </PieChart>
+                        {/* Tekst w centrum donuta */}
+                        <div className="absolute left-0 right-0 flex flex-col items-center pointer-events-none" style={{ top: '28%' }}>
+                          <span className="text-[10px] sm:text-xs uppercase tracking-wider text-on-surface-variant font-semibold">
+                            Saldo
+                          </span>
+                          <span className="text-base sm:text-lg lg:text-xl font-extrabold text-on-surface mt-0.5">
+                            {balance.amount.toLocaleString("pl-PL")} PLN
+                          </span>
+                          <span
+                            className={`text-[10px] sm:text-xs font-bold mt-0.5 ${
+                              balance.amount >= 0
+                                ? "text-primary"
+                                : "text-secondary"
+                            }`}
+                          >
+                            {balance.status}
+                          </span>
+                        </div>
+                      </ChartContainer>
+                      {/* Podsumowanie pod wykresem */}
+                      <div className="text-xs text-on-surface-variant mt-1">
+                        {totalAbs > 0 ? `${((balance.inflows / totalAbs) * 100).toFixed(0)}% przychodów` : "Brak danych"}
+                      </div>
+                    </div>
+                  );
+                })()}
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary">
@@ -512,16 +550,41 @@ useEffect(() => {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {categories.map((cat) => {
+                    {categories.map((cat, index) => {
                       const pct =
                         cat.limit && cat.limit > 0
                           ? Math.min((cat.spent / cat.limit) * 100, 100)
                           : 0;
 
+                      // Kolory pasków postępu przypisane do kategorii
+                      const colorMap: Record<string, string> = {
+                        secondary: "bg-secondary shadow-[0_0_10px_rgba(255,178,184,0.6)]",
+                        tertiary: "bg-tertiary shadow-[0_0_10px_rgba(255,207,122,0.6)]",
+                        primary: "bg-primary shadow-[0_0_10px_rgba(69,239,197,0.6)]",
+                        "primary-fixed": "bg-primary-fixed shadow-[0_0_10px_rgba(87,252,210,0.5)]",
+                        "secondary-fixed": "bg-secondary-fixed shadow-[0_0_10px_rgba(255,218,219,0.5)]",
+                      };
+
+                      const dotColorMap: Record<string, string> = {
+                        secondary: "bg-secondary",
+                        tertiary: "bg-tertiary",
+                        primary: "bg-primary",
+                        "primary-fixed": "bg-primary-fixed",
+                        "secondary-fixed": "bg-secondary-fixed",
+                      };
+
                       return (
-                        <div key={cat.id}>
+                        <motion.div
+                          key={cat.id}
+                          initial={{ opacity: 0, y: 12 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: index * 0.1, ease: "easeOut" }}
+                        >
                           <div className="flex justify-between items-center mb-1.5 text-xs sm:text-sm">
                             <span className="text-on-surface font-medium flex items-center gap-2">
+                              <span
+                                className={`w-2 h-2 rounded-full ${dotColorMap[cat.color] ?? "bg-primary"}`}
+                              />
                               <span>{cat.icon}</span>
                               {cat.name}
                             </span>
@@ -531,21 +594,15 @@ useEffect(() => {
                               {cat.currency}
                             </span>
                           </div>
-                          {cat.limit && (
-                            <div className="w-full h-2.5 rounded-full bg-surface-container-lowest overflow-hidden border border-border/40">
-                              <div
-                                className={`h-full rounded-full transition-all duration-700 ${
-                                  pct >= 90
-                                    ? "bg-secondary"
-                                    : pct >= 70
-                                      ? "bg-tertiary"
-                                      : "bg-primary"
-                                }`}
-                                style={{ width: `${pct}%` }}
-                              />
-                            </div>
-                          )}
-                        </div>
+                          <div className="w-full h-2.5 rounded-full bg-surface-container-lowest overflow-hidden border border-border/40">
+                            <motion.div
+                              className={`h-full rounded-full ${colorMap[cat.color] ?? "bg-primary"}`}
+                              initial={{ width: 0 }}
+                              animate={{ width: `${pct}%` }}
+                              transition={{ duration: 0.8, delay: 0.3 + index * 0.1, ease: "easeOut" }}
+                            />
+                          </div>
+                        </motion.div>
                       );
                     })}
                   </div>
@@ -643,20 +700,7 @@ useEffect(() => {
 
         {/* Zakładka: Analityka */}
         {!isLoadingData && activeTab === "analityka" && (
-          <div className="py-8 text-center space-y-4">
-            <BarChart3 className="w-12 h-12 text-primary mx-auto animate-pulse" />
-            <h3 className="text-lg font-bold text-on-surface">
-              Prognozy AI i analityka
-            </h3>
-            <p className="text-sm text-on-surface-variant max-w-lg mx-auto">
-              Silnik sztucznej inteligencji analizuje Twoje wydatki w czasie
-              rzeczywistym i przewiduje trendy oszczędnościowe na podstawie
-              danych z Firestore.
-            </p>
-            <div className="inline-block px-4 py-2 rounded-full bg-primary/15 border border-primary/30 text-xs font-bold text-primary">
-              Model analityczny: Firebase + Vertex AI
-            </div>
-          </div>
+          <AnalyticsCharts operations={operations} />
         )}
 
         {/* Zakładka: Ustawienia */}

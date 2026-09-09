@@ -265,6 +265,7 @@ export default function TransactionModal({
                         🎬 Rozrywka, AI & Streaming
                       </option>
                       <option value="Zdrowie & Apteka">💊 Zdrowie & Apteka</option>
+                      <option value="Inne Wydatki">📦 Inne Wydatki</option>
                       <option value="Przychody">💰 Przychody ogólne</option>
                     </select>
                   </div>

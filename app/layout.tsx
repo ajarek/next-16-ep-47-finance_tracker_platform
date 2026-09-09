@@ -1,14 +1,10 @@
 import type { Metadata } from "next"
-import { Plus_Jakarta_Sans } from "next/font/google"
+import { Plus_Jakarta_Sans, Geist } from "next/font/google"
 import { AuthProvider } from "@/lib/auth-context"
 import "./globals.css"
+import { cn } from "@/lib/utils";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-sans",
-  display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
-})
+const geist = Geist({subsets:['latin'],variable:'--font-sans'})
 
 export const metadata: Metadata = {
   title: "Finance Tracker • Inteligentne zarządzanie finansami nowej generacji",
@@ -41,7 +37,7 @@ export default function RootLayout({
   return (
     <html
       lang='pl'
-      className={`${plusJakartaSans.variable} dark h-full antialiased`}
+      className={cn("dark", "h-full", "antialiased", "font-sans", geist.variable)}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >

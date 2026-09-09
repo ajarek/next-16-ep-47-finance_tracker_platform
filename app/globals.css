@@ -43,6 +43,8 @@
   --tertiary-container: #fef3c7;
   --on-tertiary: #ffffff;
 
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
   --outline: #94a3b8;
   --outline-variant: #cbd5e1;
   --border: rgba(148, 163, 184, 0.25);
@@ -88,6 +90,8 @@
   --tertiary-container: #f3ae00;
   --on-tertiary: #422c00;
 
+  --muted: #1c1f2d;
+  --muted-foreground: #94a3b8;
   --outline: #85948d;
   --outline-variant: #3b4a44;
   --border: rgba(255, 255, 255, 0.08);
@@ -125,6 +129,8 @@
   --color-tertiary: var(--tertiary);
   --color-tertiary-container: var(--tertiary-container);
   --color-on-tertiary: var(--on-tertiary);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   --color-outline: var(--outline);
   --color-outline-variant: var(--outline-variant);
   --color-border: var(--border);

@@ -76,7 +76,8 @@ const DEFAULT_CATEGORIES: CreateCategoryParams[] = [
   { userId: "", name: "Transport & Podróże", icon: "🚗", color: "tertiary", limit: 1500, currency: "PLN", order: 2 },
   { userId: "", name: "Rozrywka, AI & Streaming", icon: "🎬", color: "primary-fixed", limit: 500, currency: "PLN", order: 3 },
   { userId: "", name: "Zdrowie & Apteka", icon: "💊", color: "secondary-fixed", limit: 800, currency: "PLN", order: 4 },
-  { userId: "", name: "Przychody", icon: "💰", color: "primary", limit: null, currency: "PLN", order: 5 },
+  { userId: "", name: "Inne Wydatki", icon: "📦", color: "tertiary", limit: 1000, currency: "PLN", order: 5 },
+  { userId: "", name: "Przychody", icon: "💰", color: "primary", limit: null, currency: "PLN", order: 6 },
 ];
 
 /**
@@ -208,10 +209,8 @@ export async function createOperation(
       updatedAt: serverTimestamp(),
     });
 
-    // Aktualizuj spent w kategorii (tylko dla wydatków)
-    if (params.type === "expense") {
-      await adjustCategorySpent(params.userId, params.category, params.amount);
-    }
+    // Aktualizuj spent w kategorii (zarówno dla wydatków jak i przychodów)
+    await adjustCategorySpent(params.userId, params.category, params.amount);
 
     return opRef.id;
   } catch (error) {
@@ -245,7 +244,7 @@ export async function deleteOperation(
     await deleteDoc(opRef);
 
     // Cofnij spent w kategorii jeśli podano dane operacji
-    if (operation && operation.type === "expense") {
+    if (operation) {
       await adjustCategorySpent(
         operation.userId,
         operation.category,
@@ -441,13 +440,12 @@ export async function recalculateCategorySpent(
 
     const catDoc = catSnapshot.docs[0];
 
-    // 2. Pobierz wszystkie wydatki w tej kategorii
+    // 2. Pobierz wszystkie operacje w tej kategorii (zarówno wydatki jak i przychody)
     const opsRef = collection(db(), "operations");
     const opsQuery = query(
       opsRef,
       where("userId", "==", userId),
-      where("category", "==", categoryName),
-      where("type", "==", "expense")
+      where("category", "==", categoryName)
     );
 
     const opsSnapshot = await getDocs(opsQuery);
@@ -495,8 +493,8 @@ export async function recalculateAllCategoriesSpent(
 }
 
 /**
- * Sprawdza czy użytkownik ma kategorie budżetowe.
- * Jeśli nie — tworzy domyślne kategorie.
+ * Sprawdza czy użytkownik ma wszystkie domyślne kategorie budżetowe.
+ * Brakujące kategorie zostają utworzone (migration dla istniejących użytkowników).
  */
 export async function ensureDefaultCategories(
   userId: string
@@ -505,19 +503,35 @@ export async function ensureDefaultCategories(
     const catsRef = collection(db(), "categories");
     const q = query(
       catsRef,
-      where("userId", "==", userId),
-      firestoreLimit(1)
+      where("userId", "==", userId)
     );
 
     const { getDocs } = await import("firebase/firestore");
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
-      // Brak kategorii — utwórz domyślne
+      // Brak kategorii — utwórz wszystkie domyślne
       const batchCategories = DEFAULT_CATEGORIES.map((cat) =>
         createCategory(userId, { ...cat, userId })
       );
       await Promise.all(batchCategories);
+      return;
+    }
+
+    // Istnieją jakieś kategorie — sprawdź czy brakuje nowych
+    const existingNames = new Set(
+      snapshot.docs.map((d) => (d.data() as { name: string }).name)
+    );
+
+    const missingCategories = DEFAULT_CATEGORIES.filter(
+      (cat) => !existingNames.has(cat.name)
+    );
+
+    if (missingCategories.length > 0) {
+      const batchMissing = missingCategories.map((cat) =>
+        createCategory(userId, { ...cat, userId })
+      );
+      await Promise.all(batchMissing);
     }
   } catch (error) {
     console.error("[Firestore] Błąd sprawdzania kategorii:", error);
