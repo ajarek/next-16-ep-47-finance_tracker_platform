@@ -2,8 +2,7 @@
   "navLinks": [
     { "label": "Strona główna", "href": "/", "active": true },
     { "label": "Cennik & Okres Próbny", "href": "/pricing", "active": false },
-    { "label": "Panel Finansów", "href": "/dashboard", "active": false },
-    { "label": "Zarządzanie Użytkownikami", "href": "/users", "active": false }
+    { "label": "Panel Finansów", "href": "/dashboard", "active": false }
   ],
   "footerLinks": [
     { "label": "Plany subskrypcji", "href": "/pricing" },
