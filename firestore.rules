@@ -3,53 +3,110 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // =========================================================================
+    // Funkcje pomocnicze — sprawdzanie roli użytkownika
+    // =========================================================================
+
+    /**
+     * Sprawdza czy zalogowany użytkownik ma rolę "admin".
+     * Odczytuje dokument profilu z kolekcji users.
+     * Uwaga: to generuje dodatkowe odczyty — używaj oszczędnie.
+     */
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    /**
+     * Sprawdza czy dany dokument users należy do zalogowanego użytkownika
+     * LUB czy zalogowany użytkownik jest administratorem.
+     */
+    function isOwnerOrAdmin(userId) {
+      return request.auth.uid == userId || isAdmin();
+    }
+
+    /**
+     * Sprawdza czy dane operacji/kategorii należą do zalogowanego użytkownika
+     * LUB czy zalogowany użytkownik jest administratorem.
+     */
+    function isDataOwnerOrAdmin(dataUserId) {
+      return dataUserId == request.auth.uid || isAdmin();
+    }
+
+    // =========================================================================
     // Kolekcja: users — profile użytkowników
     // =========================================================================
-    // Każdy użytkownik może czytać i pisać TYLKO swój własny profil.
-    // Pola plan i planActivatedAt mogą być aktualizowane tylko przez
-    // serwer (via Admin SDK) — reguły klienta nie zezwalają na zmianę.
     match /users/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null && request.auth.uid == userId;
+      // Odczyt: właściciel LUB admin (admin widzi wszystkich — np. do zarządzania)
+      allow read: if request.auth != null
+                  && isOwnerOrAdmin(userId);
+
+      // Tworzenie: tylko właściciel (rejestracja)
+      allow create: if request.auth != null
+                    && request.auth.uid == userId;
+
+      // Aktualizacja: właściciel lub admin mogą zmieniać dane,
+      // ALE:
+      //  - wolno DODAĆ pole "role" jeśli jeszcze nie istnieje (migracja)
+      //  - nie wolno ZMIENIAĆ istniejącego pola "role" (tylko Admin SDK)
+      //  - nikt nie może zmienić pól "plan" i "planActivatedAt" (tylko Admin SDK)
+      //  - userId nie może się zmienić
       allow update: if request.auth != null
-                    && request.auth.uid == userId
+                    && isOwnerOrAdmin(userId)
+                    && !("role" in request.resource.data.diff(resource.data).affectedKeys()
+                         && "role" in resource.data)
                     && !("plan" in request.resource.data.diff(resource.data).affectedKeys())
-                    && !("planActivatedAt" in request.resource.data.diff(resource.data).affectedKeys());
-      allow delete: if false; // Nie pozwalamy na usuwanie profili
+                    && !("planActivatedAt" in request.resource.data.diff(resource.data).affectedKeys())
+                    && request.resource.data.userId == resource.data.userId;
+
+      // Usuwanie: zabronione dla wszystkich (nawet admin — wymaga Admin SDK)
+      allow delete: if false;
     }
 
     // =========================================================================
     // Kolekcja: operations — operacje finansowe
     // =========================================================================
-    // Użytkownicy mogą czytać i pisać TYLKO własne operacje.
-    // Pole userId musi odpowiadać zalogowanemu użytkownikowi.
     match /operations/{operationId} {
+      // Odczyt: właściciel operacji LUB admin (admin widzi wszystkie — monitoring)
       allow read: if request.auth != null
-                  && resource.data.userId == request.auth.uid;
+                  && isDataOwnerOrAdmin(resource.data.userId);
+
+      // Tworzenie: tylko właściciel (userId musi się zgadzać)
       allow create: if request.auth != null
                     && request.resource.data.userId == request.auth.uid
                     && request.resource.data.keys().hasAll(['userId', 'title', 'amount', 'type', 'category', 'date', 'status']);
+
+      // Aktualizacja: właściciel operacji (userId nie może się zmienić)
+      // Admin NIE może modyfikować operacji klientów z poziomu klienta
       allow update: if request.auth != null
                     && resource.data.userId == request.auth.uid
-                    && request.resource.data.userId == resource.data.userId; // userId nie może się zmienić
+                    && request.resource.data.userId == resource.data.userId;
+
+      // Usuwanie: właściciel LUB admin (admin może usuwać operacje klientów)
       allow delete: if request.auth != null
-                    && resource.data.userId == request.auth.uid;
+                    && isDataOwnerOrAdmin(resource.data.userId);
     }
 
     // =========================================================================
     // Kolekcja: categories — kategorie budżetowe
     // =========================================================================
-    // Użytkownicy mogą zarządzać TYLKO własnymi kategoriami.
     match /categories/{categoryId} {
+      // Odczyt: właściciel kategorii LUB admin (admin widzi wszystkie — monitoring)
       allow read: if request.auth != null
-                  && resource.data.userId == request.auth.uid;
+                  && isDataOwnerOrAdmin(resource.data.userId);
+
+      // Tworzenie: tylko właściciel
       allow create: if request.auth != null
                     && request.resource.data.userId == request.auth.uid;
+
+      // Aktualizacja: właściciel kategorii (userId nie może się zmienić)
+      // Admin NIE może modyfikować kategorii klientów z poziomu klienta
       allow update: if request.auth != null
                     && resource.data.userId == request.auth.uid
                     && request.resource.data.userId == resource.data.userId;
+
+      // Usuwanie: właściciel LUB admin (admin może usuwać kategorie klientów)
       allow delete: if request.auth != null
-                    && resource.data.userId == request.auth.uid;
+                    && isDataOwnerOrAdmin(resource.data.userId);
     }
   }
 }

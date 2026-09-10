@@ -8,6 +8,7 @@
  *   ├── email: string
  *   ├── photoURL: string | null
  *   ├── provider: "google" | "github" | "email"
+ *   ├── role: UserRole
  *   ├── plan: UserPlan
  *   ├── planActivatedAt: Timestamp | null
  *   ├── trialEndsAt: Timestamp | null
@@ -44,6 +45,9 @@ import { type Timestamp } from "firebase/firestore";
 /** Dostępne plany użytkownika */
 export type UserPlan = "free" | "starter" | "pro" | "enterprise";
 
+/** Rola użytkownika w aplikacji */
+export type UserRole = "admin" | "user";
+
 /** Typ statusu operacji finansowej */
 export type OperationStatus = "pending" | "completed" | "cancelled";
 
@@ -62,6 +66,8 @@ export interface FirestoreUser {
   photoURL: string | null;
   /** Dostawca uwierzytelniania */
   provider: "google" | "github" | "email";
+  /** Rola użytkownika (admin / user) */
+  role: UserRole;
   /** Aktualny plan subskrypcji */
   plan: UserPlan;
   /** Data aktywacji planu (null dla planu free) */

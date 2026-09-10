@@ -25,6 +25,7 @@ import {
   Wallet,
   Receipt,
   Settings,
+  Shield,
 } from "lucide-react";
 
 import { useAuth } from "@/lib/auth-context";
@@ -59,7 +60,7 @@ type TabType = "pulpit" | "transakcje" | "analityka" | "ustawienia";
  */
 export default function DashboardPageContent() {
   const router = useRouter();
-  const { user, userProfile, loading: authLoading } = useAuth();
+  const { user, userProfile, isAdmin, loading: authLoading } = useAuth();
 
   const [activeTab, setActiveTab] = useState<TabType>("pulpit");
   const [operations, setOperations] = useState<FirestoreOperation[]>([]);
@@ -334,6 +335,11 @@ useEffect(() => {
                 <span className="text-lg sm:text-xl font-extrabold text-on-surface tracking-tight">
                   Finance Tracker
                 </span>
+                {isAdmin && (
+                  <span className="bg-primary/20 text-primary border border-primary/40 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase shadow-[0_0_10px_rgba(69,239,197,0.3)]">
+                    👑 Admin
+                  </span>
+                )}
                 <span className="bg-primary/20 text-primary border border-primary/30 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
                   {userProfile?.plan}
                 </span>
@@ -726,16 +732,31 @@ useEffect(() => {
                   </div>
                 )}
                 <div>
-                  <p className="text-lg font-bold text-on-surface">
-                    {userProfile?.displayName ?? "Użytkownik"}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg font-bold text-on-surface">
+                      {userProfile?.displayName ?? "Użytkownik"}
+                    </p>
+                    {isAdmin && (
+                      <span className="px-2 py-0.5 rounded-full bg-primary/20 border border-primary/40 text-[10px] font-bold text-primary uppercase tracking-wider">
+                        👑 Admin
+                      </span>
+                    )}
+                  </div>
                   <p className="text-sm text-on-surface-variant">
                     {user.email}
                   </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-3 gap-3 text-xs">
+                <div className="p-3 rounded-xl bg-surface-container-lowest border border-border">
+                  <span className="text-on-surface-variant block mb-1">
+                    Rola
+                  </span>
+                  <span className={`font-bold uppercase ${isAdmin ? "text-primary" : "text-on-surface"}`}>
+                    {userProfile?.role ?? "user"}
+                  </span>
+                </div>
                 <div className="p-3 rounded-xl bg-surface-container-lowest border border-border">
                   <span className="text-on-surface-variant block mb-1">
                     Plan
@@ -778,6 +799,31 @@ useEffect(() => {
                 </li>
               </ul>
             </div>
+
+            {/* Sekcja admina — tylko dla administratorów */}
+            {isAdmin && (
+              <div className="bg-surface-container-high/50 border border-primary/30 rounded-2xl p-6 space-y-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <Shield className="w-4 h-4 text-primary" />
+                  <h4 className="text-sm font-bold text-on-surface">
+                    Zarządzanie systemem
+                  </h4>
+                  <span className="px-1.5 py-0.5 rounded-full bg-primary/20 border border-primary/40 text-[9px] font-bold text-primary uppercase">
+                    Admin
+                  </span>
+                </div>
+                <p className="text-xs text-on-surface-variant">
+                  Przeglądaj wszystkich użytkowników, sprawdzaj role i plany subskrypcji.
+                </p>
+                <Link
+                  href="/admin"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary hover:bg-primary-hover text-on-primary font-bold text-xs shadow-[0_0_15px_var(--glow-primary)] transition-all"
+                >
+                  <Shield className="w-3.5 h-3.5" />
+                  Otwórz panel admina
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </main>

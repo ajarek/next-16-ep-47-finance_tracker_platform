@@ -35,6 +35,7 @@ import type {
   CreateCategoryParams,
   UpdateCategoryParams,
   UserPlan,
+  UserRole,
 } from "@/lib/firestore-types";
 
 // Re-export typów dla wygody importujących
@@ -47,6 +48,7 @@ export type {
   CreateCategoryParams,
   UpdateCategoryParams,
   UserPlan,
+  UserRole,
 } from "@/lib/firestore-types";
 
 // ============================================================================
@@ -68,6 +70,14 @@ function handleFirestoreError(operation: string, error: unknown): never {
 // ============================================================================
 // Kolekcja: users
 // ============================================================================
+
+/** Email użytkownika administratora */
+const ADMIN_EMAILS = ["ajarek2101@gmail.com"];
+
+/** Zwraca rolę użytkownika na podstawie adresu e-mail */
+export function resolveUserRole(email: string): UserRole {
+  return ADMIN_EMAILS.includes(email.toLowerCase()) ? "admin" : "user";
+}
 
 /** Domyślne kategorie przypisywane nowemu użytkownikowi */
 const DEFAULT_CATEGORIES: CreateCategoryParams[] = [
@@ -112,12 +122,13 @@ export async function createUserProfile(
   const trialEndsAt = new Date();
   trialEndsAt.setDate(trialEndsAt.getDate() + 7);
 
-  // Utwórz profil użytkownika
+  // Utwórz profil użytkownika — rola zależna od adresu e-mail
   const userData: Record<string, unknown> = {
     displayName: data.displayName,
     email: data.email,
     photoURL: data.photoURL,
     provider: data.provider,
+    role: resolveUserRole(data.email),
     plan: "free" as UserPlan,
     planActivatedAt: null,
     trialEndsAt: Timestamp.fromDate(trialEndsAt),
@@ -169,6 +180,26 @@ export async function updateUserPlan(
   }
 
   await updateDoc(userRef, updateData);
+}
+
+/**
+ * Pobiera WSZYSTKICH użytkowników z Firestore.
+ * Działa tylko dla adminów — reguły Security Rules blokują dostęp dla userów.
+ */
+export async function getAllUsers(): Promise<FirestoreUser[]> {
+  try {
+    const usersRef = collection(db(), "users");
+    const q = query(usersRef, orderBy("createdAt", "desc"));
+
+    const { getDocs } = await import("firebase/firestore");
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map(
+      (d) => ({ id: d.id, ...d.data() } as FirestoreUser)
+    );
+  } catch (error) {
+    handleFirestoreError("pobierania wszystkich użytkowników", error);
+  }
 }
 
 /** Nasłuchuje zmian profilu użytkownika w czasie rzeczywistym */
@@ -489,6 +520,31 @@ export async function recalculateAllCategoriesSpent(
     }
   } catch (error) {
     console.error("[Firestore] Błąd przeliczania wszystkich kategorii:", error);
+  }
+}
+
+/**
+ * Migruje istniejącego użytkownika — dodaje pole `role` jeśli brakuje.
+ * Wywoływane przy każdym logowaniu, aby obsłużyć użytkowników
+ * zarejestrowanych przed wprowadzeniem systemu ról.
+ */
+export async function ensureUserRole(userId: string, email: string): Promise<void> {
+  try {
+    const userRef = doc(db(), "users", userId);
+    const snapshot = await getDoc(userRef);
+
+    if (!snapshot.exists()) return;
+
+    const data = snapshot.data();
+    if (!data.role) {
+      // Użytkownik bez roli — nadaj odpowiednią na podstawie emaila
+      await updateDoc(userRef, {
+        role: resolveUserRole(email),
+        updatedAt: serverTimestamp(),
+      });
+    }
+  } catch (error) {
+    console.error("[Firestore] Błąd migracji roli użytkownika:", error);
   }
 }
 

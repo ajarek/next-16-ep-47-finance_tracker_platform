@@ -42,6 +42,7 @@ import {
   createUserProfile,
   getUserProfile,
   ensureDefaultCategories,
+  ensureUserRole,
   type FirestoreUser,
 } from "@/lib/firestore";
 
@@ -54,6 +55,8 @@ interface AuthContextValue {
   user: User | null;
   /** Profil użytkownika z Firestore */
   userProfile: FirestoreUser | null;
+  /** Czy użytkownik jest administratorem */
+  isAdmin: boolean;
   /** Czy trwa ładowanie sesji / profilu */
   loading: boolean;
   /** Logowanie przez Google */
@@ -137,6 +140,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
           // Upewnij się, że kategorie istnieją (dla istniejących użytkowników)
           await ensureDefaultCategories(firebaseUser.uid);
+
+          // Migruj rolę użytkownika (dla kont bez pola role)
+          await ensureUserRole(firebaseUser.uid, firebaseUser.email ?? "");
 
           setUserProfile(profile);
         } catch (error) {
@@ -258,6 +264,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const value: AuthContextValue = {
     user,
     userProfile,
+    isAdmin: userProfile?.role === "admin",
     loading: loading || !profileLoaded,
     signInWithGoogle,
     signInWithGitHub,

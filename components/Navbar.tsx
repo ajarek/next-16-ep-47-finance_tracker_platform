@@ -26,7 +26,7 @@ export default function Navbar({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
-  const { user, userProfile, loading, signOutUser } = useAuth();
+  const { user, userProfile, isAdmin, loading, signOutUser } = useAuth();
 
   // Zamknij menu profilowe po kliknięciu poza nim
   useEffect(() => {
@@ -164,9 +164,16 @@ export default function Navbar({
                         </div>
                       )}
                       <div className="min-w-0">
-                        <p className="text-sm font-bold text-on-surface truncate">
-                          {userProfile?.displayName ?? "Użytkownik"}
-                        </p>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-sm font-bold text-on-surface truncate">
+                            {userProfile?.displayName ?? "Użytkownik"}
+                          </p>
+                          {isAdmin && (
+                            <span className="shrink-0 px-1.5 py-0.5 rounded-full bg-primary/20 border border-primary/40 text-[9px] font-bold text-primary uppercase tracking-wider">
+                              Admin
+                            </span>
+                          )}
+                        </div>
                         <p className="text-[11px] text-on-surface-variant truncate">
                           {user.email}
                         </p>
@@ -191,6 +198,17 @@ export default function Navbar({
                     >
                       📊 Panel finansów
                     </Link>
+
+                    {/* Link do panelu admina — tylko dla adminów */}
+                    {isAdmin && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setIsProfileOpen(false)}
+                        className="flex items-center gap-2 w-full py-2 px-3 rounded-xl text-sm font-semibold text-primary hover:bg-primary/10 transition-colors text-left"
+                      >
+                        👑 Panel admina
+                      </Link>
+                    )}
 
                     {/* Wylogowanie */}
                     <button

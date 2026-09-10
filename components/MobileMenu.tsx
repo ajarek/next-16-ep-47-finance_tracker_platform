@@ -36,7 +36,7 @@ export default function MobileMenu({
   onOpenTransactionModal,
   onOpenAuthModal,
 }: MobileMenuProps) {
-  const { user, userProfile, loading, signOutUser } = useAuth();
+  const { user, userProfile, isAdmin, loading, signOutUser } = useAuth();
 
   // Blokowanie przewijania strony przy otwartym menu
   useEffect(() => {
@@ -165,6 +165,21 @@ export default function MobileMenu({
                     <span className="flex items-center gap-2">
                       <BarChart3 className="w-5 h-5 text-primary" />
                       Panel finansów
+                    </span>
+                    <ArrowRight className="w-4 h-4 opacity-70" />
+                  </Link>
+                )}
+
+                {/* Link do panelu admina — tylko dla adminów */}
+                {user && !loading && isAdmin && (
+                  <Link
+                    href="/admin"
+                    onClick={onClose}
+                    className="flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold text-primary hover:bg-primary/10 transition-all"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Shield className="w-5 h-5 text-primary" />
+                      👑 Panel admina
                     </span>
                     <ArrowRight className="w-4 h-4 opacity-70" />
                   </Link>
