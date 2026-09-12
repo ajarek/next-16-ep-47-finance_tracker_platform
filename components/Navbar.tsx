@@ -7,6 +7,8 @@ import MobileMenu from "@/components/MobileMenu";
 import { useAuth } from "@/lib/auth-context";
 import type { NavLinkItem } from "@/lib/types";
 import Link from "next/link";
+import Image from "next/image";
+import UserAvatar from "./Avatar";
 
 interface NavbarProps {
   navLinks: NavLinkItem[];
@@ -128,7 +130,9 @@ export default function Navbar({
                   aria-label="Menu użytkownika"
                 >
                   {userProfile?.photoURL ? (
-                    <img
+                    <Image
+                      width={36}
+                      height={36}
                       src={userProfile.photoURL}
                       alt={userProfile.displayName}
                       className="w-9 h-9 rounded-full border-2 border-primary/40 object-cover"
@@ -136,7 +140,7 @@ export default function Navbar({
                     />
                   ) : (
                     <div className="w-9 h-9 rounded-full bg-primary/20 hover:bg-primary/30 border border-primary/30 flex items-center justify-center text-primary">
-                      <User className="w-4 h-4" />
+                      <UserAvatar />
                     </div>
                   )}
                   <ChevronDown
@@ -152,7 +156,9 @@ export default function Navbar({
                     {/* Informacje o użytkowniku */}
                     <div className="flex items-center gap-3 pb-3 border-b border-border">
                       {userProfile?.photoURL ? (
-                        <img
+                        <Image
+                          width={40}
+                          height={40}
                           src={userProfile.photoURL}
                           alt={userProfile.displayName}
                           className="w-10 h-10 rounded-full border border-primary/30 object-cover"
@@ -160,7 +166,7 @@ export default function Navbar({
                         />
                       ) : (
                         <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary">
-                          <User className="w-5 h-5" />
+                          <UserAvatar />
                         </div>
                       )}
                       <div className="min-w-0">

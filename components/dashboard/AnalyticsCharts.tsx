@@ -192,7 +192,7 @@ export default function AnalyticsCharts({ operations }: AnalyticsChartsProps) {
         <div className="bg-surface-container-high/50 border border-border rounded-2xl p-6 backdrop-blur-xl">
           <h4 className="text-sm font-bold text-on-surface mb-1">Wydatki wg kategorii</h4>
           <p className="text-xs text-on-surface-variant mb-4">Rozkład wydatków na kategorie budżetowe</p>
-          <ChartContainer config={expensePieConfig} className="h-[280px] w-full">
+          <ChartContainer config={expensePieConfig} className="h-70 w-full">
             <PieChart>
               <ChartTooltip
                 content={
@@ -228,7 +228,7 @@ export default function AnalyticsCharts({ operations }: AnalyticsChartsProps) {
         <div className="bg-surface-container-high/50 border border-border rounded-2xl p-6 backdrop-blur-xl">
           <h4 className="text-sm font-bold text-on-surface mb-1">Trend salda</h4>
           <p className="text-xs text-on-surface-variant mb-4">Kumulatywne saldo na przestrzeni czasu</p>
-          <ChartContainer config={balanceTrendConfig} className="h-[280px] w-full">
+          <ChartContainer config={balanceTrendConfig} className="h-70 w-full">
             <AreaChart data={balanceTrendData}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis
@@ -274,7 +274,7 @@ export default function AnalyticsCharts({ operations }: AnalyticsChartsProps) {
         <div className="bg-surface-container-high/50 border border-border rounded-2xl p-6 backdrop-blur-xl">
           <h4 className="text-sm font-bold text-on-surface mb-1">Przychody vs Wydatki</h4>
           <p className="text-xs text-on-surface-variant mb-4">Porównanie miesięczne (ostatnie 12 mies.)</p>
-          <ChartContainer config={monthlyBarConfig} className="h-[280px] w-full">
+          <ChartContainer config={monthlyBarConfig} className="h-70 w-full">
             <BarChart data={monthlyData} barGap={4}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis
@@ -307,7 +307,7 @@ export default function AnalyticsCharts({ operations }: AnalyticsChartsProps) {
         <div className="bg-surface-container-high/50 border border-border rounded-2xl p-6 backdrop-blur-xl">
           <h4 className="text-sm font-bold text-on-surface mb-1">Podsumowanie roczne</h4>
           <p className="text-xs text-on-surface-variant mb-4">Przychody, wydatki i zysk netto wg lat</p>
-          <ChartContainer config={yearlyBarConfig} className="h-[280px] w-full">
+          <ChartContainer config={yearlyBarConfig} className="h-70 w-full">
             <BarChart data={yearlyData} barGap={4}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis

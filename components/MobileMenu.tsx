@@ -16,6 +16,7 @@ import {
 import { useAuth } from "@/lib/auth-context";
 import type { NavLinkItem } from "@/lib/types";
 import Link from "next/link";
+import Image from "next/image";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -108,11 +109,13 @@ export default function MobileMenu({
                 <div className="mt-6 mb-2 p-4 rounded-xl bg-surface-container-high/60 border border-border">
                   <div className="flex items-center gap-3 mb-3">
                     {userProfile?.photoURL ? (
-                      <img
+                      <Image
                         src={userProfile.photoURL}
                         alt={userProfile.displayName}
                         className="w-12 h-12 rounded-full border-2 border-primary/40 object-cover"
                         referrerPolicy="no-referrer"
+                        width={56}
+                        height={56}
                       />
                     ) : (
                       <div className="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary">

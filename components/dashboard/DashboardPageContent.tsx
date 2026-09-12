@@ -50,6 +50,7 @@ import TransactionModal from "@/components/TransactionModal";
 import AnalyticsCharts from "@/components/dashboard/AnalyticsCharts";
 import Link from "next/link";
 import navigationData from "@/public/data/navigation.json";
+import Image from "next/image";
 
 type TabType = "pulpit" | "transakcje" | "analityka" | "ustawienia";
 
@@ -456,7 +457,7 @@ useEffect(() => {
                     <div className="flex flex-col items-center py-4">
                       <ChartContainer
                         config={saldoChartConfig}
-                        className="relative aspect-auto h-[200px] sm:h-[250px] lg:h-[280px] w-full max-w-[240px] sm:max-w-[280px] lg:max-w-[320px]"
+                        className="relative aspect-auto h-50 sm:h-62.5 lg:h-70 w-full max-w-60 sm:max-w-70 lg:max-w-[320px]"
                       >
                         <PieChart>
                           <ChartTooltip
@@ -720,11 +721,13 @@ useEffect(() => {
             <div className="bg-surface-container-high/50 border border-border rounded-2xl p-6 space-y-4">
               <div className="flex items-center gap-3">
                 {userProfile?.photoURL ? (
-                  <img
+                  <Image
                     src={userProfile.photoURL}
                     alt={userProfile.displayName}
                     className="w-14 h-14 rounded-full border-2 border-primary/40 object-cover"
                     referrerPolicy="no-referrer"
+                    width={56}
+                    height={56}
                   />
                 ) : (
                   <div className="w-14 h-14 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary">

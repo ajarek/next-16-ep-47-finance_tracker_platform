@@ -26,6 +26,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import navigationData from "@/public/data/navigation.json";
+import Image from "next/image";
 
 /**
  * Główny komponent panelu administracyjnego.
@@ -235,11 +236,13 @@ export default function AdminPanelContent() {
                       <div className="flex items-center gap-3 min-w-0">
                         {/* Avatar */}
                         {u.photoURL ? (
-                          <img
+                          <Image
                             src={u.photoURL}
                             alt={u.displayName}
                             className="w-10 h-10 rounded-full border border-primary/30 object-cover shrink-0"
                             referrerPolicy="no-referrer"
+                            width={40}
+                            height={40}
                           />
                         ) : (
                           <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary shrink-0">
